@@ -90,3 +90,25 @@ INSERT INTO `Tb1Product` SET
     `prod_name` = '휴대폰',
     `prod_price` = 950000,
     `prod_stock` = 102;
+    
+SELECT * FROM `Tb1User`;
+SELECT `user_name` FROM `Tb1User`;
+SELECT `user_name`, `user_hp` FROM `Tb1User`;
+SELECT * FROM `Tb1User` WHERE `user_id`='p102';
+SELECT * FROM `Tb1User` WHERE `user_id`='p104' OR `user_id`='p105';
+SELECT * FROM `Tb1User` WHERE `user_addr`='부산시 금정구';
+SELECT * FROM `Tb1User` WHERE `user_age` > 30;
+SELECT * FROM `Tb1User` WHERE `user_hp` IS NULL;
+UPDATE `Tb1User` SET `user_age`=42 WHERE `user_id`='p104';
+UPDATE `Tb1User` SET `user_addr`='부산시 진구' WHERE `user_id`='p105';
+DELETE FROM `Tb1User` WHERE `user_id`='p103';
+SELECT * FROM `Tb1Product`;
+SELECT `prod_name` FROM `Tb1Product`;
+SELECT `prod_name`, `prod_company`, `prod_price` FROM `Tb1Product`;
+SELECT * FROM `Tb1Product` WHERE `prod_company`='LG전자';
+SELECT * FROM `Tb1Product` WHERE `prod_company`='삼성전자';
+UPDATE `Tb1Product` SET
+    `prod_company`='삼성전자',
+    `prod_date`='2024-01-01'
+    WHERE
+    `prod_no`=1006;
