@@ -78,3 +78,19 @@ delimiter $$
 	end $$
 delimiter ;
 call proc_test5('김유신');
+
+#실습 5-11. 저장 함수 생성 및 호출
+ DELIMITER $$
+	CREATE FUNCTION func_test1(_userid VARCHAR(10)) RETURNS INT
+	deterministic
+	BEGIN
+		DECLARE total INT;
+		SELECT SUM(`sale`) INTO total FROM `Sales` WHERE `uid`=_userid;
+		RETURN total;
+	END $$
+DELIMITER ;
+
+#show global variables like 'log_bin_trust_function_creators';
+#SET GlOBAL log_bin_trust_function_creators = 1;
+
+SELECT func_test1('a101'); #저장함수 호출(root에서만 가능)
