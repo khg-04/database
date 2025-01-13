@@ -52,14 +52,12 @@ insert into `parent` values ('P103', '장보고', '1978-03-01', '전남 완도�
 insert into `parent` values ('P104', '강감찬', '1979-08-16', '서울시 관악구');
 insert into `parent` values ('P105', '이순신', '1981-05-23', '부산시 진구');
 select * from `parent`;
-DROP TABLE `Parent`;
 
 insert into `Child` values ('C101', '김철수', '010-1234-1001', 'P101');
 insert into `Child` values ('C102', '김영희', '010-1234-1002', 'P101');
 insert into `Child` values ('C103', '강철수', '010-1234-1003', 'P103');
 insert into `Child` values ('C104', '이철수', '010-1234-1004', 'P105');
 select * from `Child`;
-DROP TABLE `Child`;
 
 #실습 3-7
 CREATE TABLE `User4`(

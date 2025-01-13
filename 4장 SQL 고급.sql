@@ -1,5 +1,5 @@
 #날짜: 2025/01/08
-#이름: 김철학
+#이름: 김효경
 #내용: 4장 SQL 고급
 
 #실습 4-1
@@ -158,3 +158,95 @@ select sum(sale) as `총합`, avg(sale) as `평균` from `Sales`
 #실습 4-9. 2020년 전체 매출 가운데 최저, 최고, 매출을 구하시오
 select max(sale) as `최고 매출`, min(sale) as `최저 매출` from `Sales`
 	where `year` = 2020;
+    
+#실습 4-10
+select @@sql_mode;
+set session sql_mode = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+select * from `Sales` group by `uid`; #MySQL 버전 8부터는 전체(*)에서 grouping을 지원 안 함, 해결하려면 위에 두 줄 필수
+select * from `Sales` group by `year`;
+select * from `Sales` group by `uid`, `year`;
+select `uid`, count(*) as `건수` from `Sales` group by `uid`;
+SELECT `uid`, SUM(sale) AS `합계` FROM `Sales` GROUP BY `uid`;
+SELECT `uid`, AVG(sale) AS `평균` FROM `Sales` GROUP BY `uid`;
+
+select `uid`, `year`, sum(sale) as `합계`
+	from `Sales`
+    group by `uid`, `year`
+    order by `year` asc, `합계` desc;
+
+#실습 4-11
+select * from `Sales`;
+select `uid`, sum(sale) as `합계` from `Sales`
+	group by `uid`
+    having `합계` >= 200000;
+
+#실습 4-12
+create table `Sales2` like `Sales`;
+insert into `Sales2` select * from `sales`;
+update `sales2` set `year` = `year` + 3;
+select * from `sales2`;
+
+select * from `Sales` union select * from `Sales2`;
+
+select * from `Sales` where `sale` >= 100000
+union
+select * from `Sales2` where `sale` >= 100000;
+
+select `uid`, `year`, `sale` from sales
+union
+select `uid`, `year`, `sale` from sales2;
+
+select `uid`, `year`, sum(sale) as '합계'
+from `Sales`
+group by `uid`, `year`
+union
+select `uid`, `year`, sum(sale) as '합계'
+from `Sales2`
+group by `uid`, `year`
+order by `year` asc, `합계` desc;
+
+#실습 4-13
+select * from `Sales` inner join `Member` on `Sales`.uid = `Member`.uid;
+select * from `Member` inner join `department` on `member`.dep = `department`.depNo;
+
+select * from `Sales` as a join `Member` as b on a.uid = b.uid;
+select * from `Member` as a join `Department` as b on a.dep = b.depNO;
+
+select * from `Sales` as a 
+join `member` as b on a.uid = b.uid
+join `department` as c on b.dep = c.depNo;
+
+#실습 4-14
+insert into `Sales` (`uid`, `year`, `month`, `sale`) values ('a201', 2020, 2, 15500);
+select * from `Sales` as a
+right join `member` as b on a.uid = b.uid; 
+# inner, left, right 차이 확인
+	# inner: 서로 공통 부분만 합쳐짐
+    # left: 왼쪽 기준으로 공통 부분만 합쳐짐
+    # rigth: 오른쪽 기준으로 공통 부분만 합쳐짐
+
+#실습 4-15. 모든 직원의 아이디, 이름, 직급, 부서명을 조회
+select `uid`, a.`name`, `pos`, b.`name` 
+from `member` as a
+join `Department` as b on a.dep = b.depNo;
+
+#실습 4-16. '김유신' 직원의 2019년도 매출의 합을 조회하시오.
+select sum(`sale`) as `김유신 2019년 매출 합` from `Sales` as a
+join `Member` as b on a.uid = b.uid
+where `name` = '김유신' and `year` = 2019;
+
+#실습 4-17. 2019년 5만원 이상 매출에 대해 직원별 매출의 합이 십만원 이상인 직원 이름, 부서명, 직급,년도,
+#			매출 합을 조회하시오. 단, 매출 합이 큰 순서부터 정렬
+select 
+	b.`name`, 
+	c.`name`, 
+	b.`pos`, 
+	a.`year`, 
+	sum(`sale`) as `매출합` from `Sales` as a
+join `Member` as b on a.uid = b.uid
+join `Department` as c on b.dep = c.depNo
+where `year`=2019 and `sale` >= 50000
+group by a.`uid`
+having `매출합` >= 100000
+order by `매출합` desc;
