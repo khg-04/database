@@ -152,6 +152,7 @@ join `Customer` as b
 on a.orderId = b.custId
 join `Product` as c
 on a.orderProduct = c.prodNo
-where date(`orderDate`) = '2022-07-03';
+where `orderDate` like '2022-07-03%';
+#where date(`orderDate`) = '2022-07-03';
 #where month(orderDate) = '07' and day(orderDate) = '03'
 #where substr(`orderDate`, 1, 10) = '2022-07-03';
