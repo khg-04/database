@@ -110,6 +110,11 @@ select
     count(case when `t_dist`=2 then 1 end) as `출금 건수`,
     count(case when `t_dist`=3 then 1 end) as `조회 건수`
     from `bank_transaction`;
+select
+	count(if(`t_dist`=1, 1, null)) as `입금 건수`,
+    count(if(`t_dist`=2, 1, null)) as `출금 건수`,
+    count(if(`t_dist`=3, 1, null)) as `조회 건수`
+    from `bank_transaction`;
     
 #실습 2-21. 거래내역에서 거래 구분번호를 통해 type을 아래와 같이 조회
 select `t_dist`,
@@ -123,7 +128,72 @@ select `t_dist`,
  from `bank_transaction`;
 
 #실습 2-23. 입금 거래만 계좌별로 합계를 조회
-select `t_a_no`, `t_dist`, sum(`t_amount`) from `bank_transaction` where `t_dist` = 1 group by `t_a_no`
+select `t_a_no`, `t_dist`, sum(`t_amount`) from `bank_transaction` where `t_dist` = 1 group by `t_a_no`;
 
 #실습 2-24. 입금 거래만 계좌별로 합계 구하고 10만원 이상만 큰 순서로 조회
-select `t_a_no`, `t_dist`
+select `t_a_no`, `t_dist`, sum(`t_amount`) as `합계` from `bank_transaction` 
+	where `t_dist` = 1 
+	group by `t_a_no`
+    having 합계 >= 100000
+	order by `합계` desc;
+
+#실습 2-25. 계좌 테이블과 고객 테이블을 결합
+select * from `bank_account` as a
+	join `bank_customer` as b
+    on a.a_c_no = b.c_no;
+
+#t실습 2-26
+select a.a_no as `계좌번호`, a.a_item_name as `계좌이름`, b.c_no as `주민번호(사업자번호)`, b.c_name as `고객명`, a.a_balance as `현재잔액`
+	from `bank_account` as a
+	join `bank_customer` as b
+    on a.a_c_no = b.c_no;
+
+#실습 2-27. 거래 테이블과 계좌 테이블을 결합
+select * from `bank_transaction` as a
+	join `bank_account` as b
+    on a.t_a_no = b.a_no;
+    
+#실습 2-28
+select 
+	`t_no` AS `거래번호`,
+	`t_a_no` AS `계좌번호`,
+	`a_c_no` AS `고객번호(주민번호)`, `t_dist` AS `거래구분`,
+	`t_amount` AS `거래금액`, `t_datetime` AS `거래일자`
+	from `bank_account` as a 
+    join `bank_transaction` as b
+    on a.a_no = b.t_a_no;
+
+#실습 2-29. 거래 구분이 입금이고 큰 거래금액 순으로 아래와 같이 데이터가 조회
+select  
+	`t_no`,
+	`a_no`,
+	`c_no`,
+	`t_dist`,
+	`a_item_name`,
+	`c_name`,
+	`t_amount`,
+	`t_datetime`
+	from `bank_transaction` as a
+    join `bank_account` as b on a.t_a_no = b.a_no
+    join `bank_customer` as c on b.a_c_no = c.c_no
+    where `t_dist` =1
+    order by `t_amount` desc;
+
+#실습 2-30. 거래구분이 입금, 출금이고 개인 고객을 대상으로 거래건수를 아래와 같이 조회. 단, 거래구분은 작은 순서로 거래건수는 큰순서로 정렬
+#Error Code: 1055
+SELECT @@sql_mode;
+SET SESSION sql_mode = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+select 
+	`t_no`,
+	`a_no`,
+	`c_no`,
+	`t_dist`,
+	`a_item_name`,
+	`c_name`,COUNT(`t_no`) AS `거래건수`
+	from `bank_transaction` as a
+    join `bank_account` as b on a.t_a_no = b.a_no
+    join `bank_customer` as c on b.a_c_no = c.c_no
+    where `t_dist` in(1, 2) and `c_dist` = 1
+    group by a_no
+    order by `t_dist`, `거래건수` desc;
