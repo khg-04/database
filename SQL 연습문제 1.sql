@@ -8,6 +8,8 @@ create user 'shop'@'%' identified by '1234'; # %: 원격으로 접속하는 외�
 grant all privileges on Shop.* to 'shop'@'%';
 flush privileges;
 
+use shop;
+
 create table `Customer` (
 	`custId` VARCHAR(10) primary key,
 	`name` VARCHAR(10) NOT NULL,
