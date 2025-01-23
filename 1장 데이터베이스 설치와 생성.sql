@@ -4,10 +4,10 @@
 
 #실습 1-1
 CREATE DATABASE `StudyDB`;
-DROP DATABASE `StudyDB`;
+#DROP DATABASE `StudyDB`;
 
 #실습 1-2
-CREATE USER 'rlagyrud222'@'%' identified by '1234'
+CREATE USER 'rlagyrud222'@'%' identified by '1234';
 GRANT ALL PRIVILEGES ON StudyDB.* to 'rlagyrud222'@'%';
 FLUSH PRIVILEGES;
 
