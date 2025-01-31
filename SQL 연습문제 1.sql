@@ -34,6 +34,7 @@ create table `Order` (
     `orderDate` datetime not null
     );
 drop table `Customer`;
+alter table `product` modify `prodNo` int auto_increment;
 
 #실습 1-3: 데이터 입력
 insert into `Customer` values ('c101', '김유신' , '010-1234-1001', '김해시 봉황동', '2022-01-01');
